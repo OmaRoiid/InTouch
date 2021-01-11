@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
-import {  Subject } from "rxjs";
+import { Router } from "@angular/router";
+import { from, Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { Post } from "./post.model";
@@ -9,7 +10,7 @@ export class PostsService {
   private posts: Post[] = [];
   private postsUpdatedObservable = new Subject<Post[]>();
 
-  constructor(private mHttpClient: HttpClient) {}
+  constructor(private mHttpClient: HttpClient, private mRouter: Router) {}
   getPosts() {
     this.mHttpClient
       .get<{ message: string; posts: any }>("http://localhost:3000/api/posts")
@@ -28,27 +29,51 @@ export class PostsService {
         this.posts = transformedPostsData;
         this.postsUpdatedObservable.next([...this.posts]);
       });
-    //return [...this.posts];
   }
 
   getPostUpdateListener() {
     return this.postsUpdatedObservable.asObservable();
   }
+  getPostById(id: string) {
+   return this.mHttpClient.get<{ _id: string; title: string; content: string }>(
+     "http://localhost:3000/api/posts/" + id
+   );
+  }
 
   addPost(title: string, content: string) {
     const post: Post = { id: null, title: title, content: content };
     this.mHttpClient
-      .post<{ message: string ,postId:string}>("http://localhost:3000/api/posts", post)
-      .subscribe((resData) => {
+      .post<{ message: string; postId: string }>(
+        "http://localhost:3000/api/posts",
+        post
+      )
+      .subscribe(
+        (resData) => {
           const postId = resData.postId;
-          post.id=postId
+          post.id = postId;
           this.posts.push(post);
           this.postsUpdatedObservable.next([...this.posts]);
+          this.mRouter.navigate(["/"]);
         },
         (error) => {
           console.log(error);
         }
       );
+  }
+  updatePost(id: string, title: string, content: string) {
+    const postToUpdate: Post = { id: id, title: title, content: content };
+    this.mHttpClient
+      .put("http://localhost:3000/api/posts/edit/" + id, postToUpdate)
+      .subscribe((response) => {
+        const updatePosts = [...this.posts];
+        const oldPostsIndex = updatePosts.findIndex(
+          (p) => p.id === postToUpdate.id
+        );
+        updatePosts[oldPostsIndex] = postToUpdate;
+        this.posts = updatePosts;
+        this.postsUpdatedObservable.next([...this.posts]);
+        this.mRouter.navigate(["/"]);
+      });
   }
   deletePost(id: string) {
     this.mHttpClient
