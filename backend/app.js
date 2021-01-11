@@ -10,7 +10,7 @@ mongoose
   )
   .then(() => {
     console.log("Connect to DB");
-  })
+  });
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,27 +33,27 @@ app.post("/api/posts", (req, res, next) => {
     title: req.body.title,
     content: req.body.content,
   });
-  post.save()
+  post.save().then(createdPost=>{
   res.status(201).json({
     message: "post Added",
+    postId:createdPost._id
   });
+  })
 });
 app.get("/api/posts", (req, res, next) => {
-  const posts = [
-    {
-      id: "adsasd3252",
-      title: "this is server post",
-      content: "this post from server :)",
-    },
-    {
-      id: "adsasd3253",
-      title: "this is server post",
-      content: "this sec post from server :}",
-    },
-  ];
-  res.status(200).json({
-    message: "posts fetched",
-    posts: posts,
+  Post.find().then((results) => {
+    res.status(200).json({
+      message: "posts fetched",
+      posts: results,
+    });
+  });
+});
+app.delete("/api/posts/:id", (req, res, next) => {
+  const deletePostId = req.params.id;
+  Post.deleteOne({ _id: deletePostId }).then((results) => {
+    res.status(200).json({
+      message: "post Deleted",
+    });
   });
 });
 
