@@ -3,6 +3,7 @@ const path= require("path")
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const postRoutes = require("./routes/postsRoutes");
+const userRoutes = require("./routes/userRoutes");
 const app = express();
 //Connect the db
 mongoose
@@ -12,7 +13,7 @@ mongoose
   .then(() => {
     console.log("Connect to DB");
   });
-
+//setup backend midelware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use("/images",express.static(path.join("backend/images")))
@@ -28,7 +29,8 @@ app.use((req, res, next) => {
   );
   next();
 });
-
+//setup backend apis
 app.use("/api/posts",postRoutes)
+app.use("/api/user", userRoutes);
 
 module.exports = app;
