@@ -2,8 +2,11 @@ const express = require("express");
 const path= require("path")
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
+mongoose.set("useNewUrlParser", true);
+mongoose.set("useFindAndModify", false);
+mongoose.set("useCreateIndex", true);
 const postRoutes = require("./routes/postsRoutes");
-const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
 const app = express();
 //Connect the db
 mongoose
@@ -21,7 +24,7 @@ app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin,X-Requested-With,Content-Type, Accept"
+    "Origin,X-Requested-With,Content-Type, Accept,Authorization"
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
@@ -31,6 +34,6 @@ app.use((req, res, next) => {
 });
 //setup backend apis
 app.use("/api/posts",postRoutes)
-app.use("/api/user", userRoutes);
+app.use("/api/user", authRoutes);
 
 module.exports = app;
