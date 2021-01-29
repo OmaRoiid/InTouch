@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const checkAuth=require("../middleware/check-auth")
+const checkAuth = require("../middleware/check-auth");
 const Post = require("../models/posts");
 const IMAGES_TYPE = {
   "image/png": "png",
@@ -33,6 +33,7 @@ router.post(
       title: req.body.title,
       content: req.body.content,
       imagePath: url + "/images/" + req.file.filename,
+      creator: req.userData.userId,
     });
     post.save().then((createdPost) => {
       res.status(201).json({
@@ -46,28 +47,6 @@ router.post(
   }
 );
 
-router.put(
-  "/edit/:id",
-  checkAuth,
-  multer({ storage: storage }).single("image"),
-  (req, res, next) => {
-    let imagePath = req.body.imagePath;
-    if (req.file) {
-      const url = req.protocol + "://" + req.get("host");
-      imagePath = url + "/images/" + req.file.filename;
-    }
-    const post = new Post({
-      _id: req.body.id,
-      title: req.body.title,
-      content: req.body.content,
-      imagePath: imagePath,
-    });
-    console.log(post);
-    Post.updateOne({ _id: req.params.id }, post).then((result) => {
-      res.status(200).json({ message: "Update successful" });
-    });
-  }
-);
 router.get("", (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
@@ -85,7 +64,7 @@ router.get("", (req, res, next) => {
       res.status(200).json({
         message: "posts fetched",
         posts: fetchedResults,
-        maxPosts:count
+        maxPosts: count,
       });
     });
 });
@@ -98,13 +77,47 @@ router.get("/:id", (req, res, next) => {
     }
   });
 });
-router.delete("/:d", checkAuth, (req, res, next) => {
-  const deletePostId = req.params.id;
-  Post.deleteOne({ _id: deletePostId }).then((results) => {
-    res.status(200).json({
-      message: "post Deleted",
+router.put(
+  "/edit/:id",
+  checkAuth,
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
+      creator:req.userData.userId
     });
-  });
+    console.log(post);
+    Post.updateOne(
+      { _id: req.params.id, creator: req.userData.userId },
+      post
+    ).then((result) => {
+      if (result.nModified > 0) {
+        res.status(200).json({ message: "Update successful" });
+      } else {
+        res.status(401).json({ message: "Not Authorized!!" });
+      }
+    });
+  }
+);
+router.delete("/:id", checkAuth, (req, res, next) => {
+  const deletePostId = req.params.id;
+  Post.deleteOne({ _id: deletePostId, creator: req.userData.userId }).then(
+    (result) => {
+    if (result.n > 0) {
+      res.status(200).json({ message: "Post Deleted successful" });
+    } else {
+      res.status(401).json({ message: "Not Authorized!!" });
+    }
+    }
+  );
 });
 
 module.exports = router;
