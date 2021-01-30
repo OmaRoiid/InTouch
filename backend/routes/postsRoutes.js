@@ -43,6 +43,11 @@ router.post(
           id: createdPost._id,
         },
       });
+    }).catch((err)=>{
+      res.status(500).json({
+          title:"Adding issue",
+        message:"Post is not created"
+      })
     });
   }
 );
@@ -66,6 +71,11 @@ router.get("", (req, res, next) => {
         posts: fetchedResults,
         maxPosts: count,
       });
+    }).catch((err)=>{
+      res.status(500).json({
+         title:"Fetching issue",
+        message:"Fetching posts failed"
+      })
     });
 });
 router.get("/:id", (req, res, next) => {
@@ -75,8 +85,14 @@ router.get("/:id", (req, res, next) => {
     } else {
       res.status(404).json({ message: "Post not found!" });
     }
-  });
+  }).catch((err)=>{
+      res.status(500).json({
+         title:"Fetching issue",
+        message:"Fetching post failed"
+      })
+    });
 });
+
 router.put(
   "/edit/:id",
   checkAuth,
@@ -104,6 +120,11 @@ router.put(
       } else {
         res.status(401).json({ message: "Not Authorized!!" });
       }
+    }).catch((error)=>{
+      res.status(500).json({
+         title:"updating issue",
+        message:"Couldn't update post !"
+      })
     });
   }
 );
@@ -114,10 +135,17 @@ router.delete("/:id", checkAuth, (req, res, next) => {
     if (result.n > 0) {
       res.status(200).json({ message: "Post Deleted successful" });
     } else {
-      res.status(401).json({ message: "Not Authorized!!" });
+      res
+        .status(401)
+        .json({ title: "deleteing issue", message: "Not Authorized!!" });
     }
     }
-  );
+  ).catch(()=>{
+    res.status(500).json({
+      title:"deleteing issue",
+      message:"can not detele post"
+    })
+  });
 });
 
 module.exports = router;

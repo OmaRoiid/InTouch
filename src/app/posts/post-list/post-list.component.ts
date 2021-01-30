@@ -44,6 +44,7 @@ export class PostListComponent implements OnInit, OnDestroy {
     this.authSup = this.userServices
       .getAuthStatusListenner()
       .subscribe((authState) => {
+       
         this.isAuth = authState;
         this.userId = this.userServices.getUserId();
       });
@@ -59,8 +60,16 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   onDelete(postId: string) {
     this.isLoading = true;
+     console.log(this.isLoading);
     this.postsService.deletePost(postId).subscribe(() => {
+      this.isLoading = false;
       this.postsService.getPosts(this.postsPerPage, this.currentPage);
+       this.isLoading = false;
+       console.log(this.isLoading)
+    },(err)=>{
+      this.isLoading=false;
+      console.log(err);
+
     });
   }
 

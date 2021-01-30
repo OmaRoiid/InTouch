@@ -9,11 +9,13 @@ mat-spinner{
 .info-text {
   text-align: center;
 }
-.post-image{
+.image-path{
   width: 100%;
+  text-align: center;
 }
-.post-image  img{
-  width: 100%;
+.image-path  img{
+  margin: auto 0;
+  width: 50%;
   box-shadow:1px 1px 1px 1px 0.5 ;
 }
 mat-paginator{

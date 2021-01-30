@@ -9,7 +9,10 @@ import {
 import { Observable, of } from "rxjs";
 import { tap, catchError } from "rxjs/operators";
 import { ToastrService } from "ngx-toastr";
+import { Injectable } from "@angular/core";
 
+
+@Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
   constructor(public toasterService: ToastrService) {}
   intercept(
@@ -30,15 +33,16 @@ export class ErrorInterceptor implements HttpInterceptor {
       catchError((err: any) => {
         if (err instanceof HttpErrorResponse) {
           try {
-            this.toasterService.error(err.message, err.name, {
+            console.log(err)
+            this.toasterService.error(err.error.message, err.error.title, {
               positionClass: "toast-center-center",
             });
           } catch (e) {
             this.toasterService.error("An error occurred", "", {
-              positionClass: "toast-bottom-center",
+              positionClass: "toast-center-center",
             });
           }
-          //log error
+          
         }
         return of(err);
       })

@@ -18,9 +18,10 @@ router.post("/signup", (req, res, next) => {
           results: results,
         });
       })
-      .catch((err) => {
+      .catch(() => {
         res.status(500).json({
-          error: err,
+          title:"User is exist!",
+          message:"Invalid Authentication",
         });
       });
   });
@@ -55,9 +56,9 @@ router.post("/login", (req, res, next) => {
         userId:fetchedUser._id ,
       });
     })
-    .catch((err) => {
+    .catch(() => {
       return res.status(401).json({
-        message: "Auth failed",
+        message: "Invalid Authentication",
       });
     });
 });

@@ -1,6 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from "@angular/router";
+import { Subscription } from "rxjs";
+import { UserService } from "src/app/auth/user.service";
 import { Post } from "../post.model";
 import { PostsService } from "../posts.service";
 import {Costume} from "./costume-type.validator"
@@ -10,21 +12,29 @@ import {Costume} from "./costume-type.validator"
   templateUrl: "./post-create.component.html",
   styleUrls: ["./post-create.component.css"],
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   enteredTitle = "";
   enteredContent = "";
   mPost: Post;
   isLoading = false;
   postForm: FormGroup;
-  imagePreview:string
+  imagePreview: string;
   private mode = "create";
   private postId: string;
+  private authStatusSub: Subscription;
 
   constructor(
     public postsService: PostsService,
-    public route: ActivatedRoute
+    public route: ActivatedRoute,
+    public userServices: UserService
   ) {}
+
   ngOnInit() {
+    this.authStatusSub = this.userServices
+      .getAuthStatusListenner()
+      .subscribe((auth) => {
+        this.isLoading = false;
+      });
     this.postForm = new FormGroup({
       title: new FormControl(null, {
         validators: [Validators.required, Validators.minLength(3)],
@@ -54,7 +64,7 @@ export class PostCreateComponent implements OnInit {
           this.postForm.setValue({
             title: this.mPost.title,
             content: this.mPost.content,
-            image:this.mPost.imagePath
+            image: this.mPost.imagePath,
           });
         });
       } else {
@@ -87,11 +97,14 @@ export class PostCreateComponent implements OnInit {
   onImageSelected(event: Event) {
     const selectedImage = (event.target as HTMLInputElement).files[0];
     this.postForm.patchValue({ image: selectedImage });
-    this.postForm.get('image').updateValueAndValidity();
+    this.postForm.get("image").updateValueAndValidity();
     const reader = new FileReader();
-    reader.onload=()=>{
-      this.imagePreview=reader.result as string
-    }
-    reader.readAsDataURL(selectedImage)
+    reader.onload = () => {
+      this.imagePreview = reader.result as string;
+    };
+    reader.readAsDataURL(selectedImage);
+  }
+  ngOnDestroy() {
+    this.authStatusSub.unsubscribe();
   }
 }
