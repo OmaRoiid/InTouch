@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { NgForm } from "@angular/forms";
 import { Subscription } from "rxjs";
-import { UserService } from "../user.service";
+import { UserAuthService } from "../userAuth.service";
 
 @Component({
   selector: "app-signup",
@@ -11,7 +11,7 @@ import { UserService } from "../user.service";
 export class SignupComponent implements OnInit, OnDestroy {
   isLoading = false;
   private authStatusSub: Subscription;
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserAuthService) {}
 
   ngOnInit() {
     this.authStatusSub = this.userService

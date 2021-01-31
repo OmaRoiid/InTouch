@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { Subscription } from "rxjs";
-import { UserService } from "../auth/user.service";
+import { UserAuthService } from "../auth/userAuth.service";
 
 @Component({
   selector: "app-header",
@@ -11,10 +11,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isAuth = false;
   private AuthSup: Subscription;
 
-  constructor(private userServices: UserService) {}
+  constructor(private userServices: UserAuthService) {}
 
   ngOnInit() {
-    this.isAuth=this.userServices.getUserAuth()
+    this.isAuth = this.userServices.getUserAuth();
     this.AuthSup = this.userServices
       .getAuthStatusListenner()
       .subscribe((authState) => {
@@ -25,7 +25,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.AuthSup.unsubscribe();
   }
-  onUserLogout(){
-    this.userServices.logout()
+  onUserLogout() {
+    this.userServices.logout();
   }
 }

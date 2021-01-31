@@ -1,16 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from './auth/user.service';
+import { UserAuthService } from "./auth/userAuth.service";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  selector: "app-root",
+  templateUrl: "./app.component.html",
+  styleUrls: ["./app.component.css"],
 })
 export class AppComponent implements OnInit {
-
-  constructor(private userServices:UserService){}
+  constructor(private userServices: UserAuthService) {}
   ngOnInit() {
-    this.userServices.autoAuthUser()
+    this.userServices.autoAuthUser();
   }
-
 }

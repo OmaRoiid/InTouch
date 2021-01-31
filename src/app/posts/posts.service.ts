@@ -1,21 +1,26 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { from, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { HttpClient } from "@angular/common/http";
 import { map } from "rxjs/operators";
 import { Post } from "./post.model";
+import { environment } from "src/environments/environment";
 
+const BASE_URL = environment.apiUrl + "/posts";
 @Injectable({ providedIn: "root" })
 export class PostsService {
   private posts: Post[] = [];
-  private postsUpdatedObservable = new Subject<{posts:Post[],postCount:number}>();
+  private postsUpdatedObservable = new Subject<{
+    posts: Post[];
+    postCount: number;
+  }>();
 
   constructor(private mHttpClient: HttpClient, private mRouter: Router) {}
   getPosts(postsPerPage: number, currentPage: number) {
     const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
     this.mHttpClient
       .get<{ message: string; posts: any; maxPosts: number }>(
-        "http://localhost:3000/api/posts" + queryParams
+        BASE_URL + queryParams
       )
       .pipe(
         map((resutls) => {
@@ -34,7 +39,7 @@ export class PostsService {
         })
       )
       .subscribe((transformedPostsData) => {
-        console.log(transformedPostsData)
+        console.log(transformedPostsData);
         this.posts = transformedPostsData.posts;
         this.postsUpdatedObservable.next({
           posts: [...this.posts],
@@ -52,8 +57,8 @@ export class PostsService {
       title: string;
       content: string;
       imagePath: string;
-      creator:string
-    }>("http://localhost:3000/api/posts/" + id);
+      creator: string;
+    }>(BASE_URL + `/${id}`);
   }
 
   addPost(title: string, content: string, image: File) {
@@ -62,10 +67,7 @@ export class PostsService {
     postData.append("content", content);
     postData.append("image", image, title);
     this.mHttpClient
-      .post<{ message: string; post: Post }>(
-        "http://localhost:3000/api/posts",
-        postData
-      )
+      .post<{ message: string; post: Post }>(BASE_URL, postData)
       .subscribe(
         (resData) => {
           this.mRouter.navigate(["/"]);
@@ -89,17 +91,16 @@ export class PostsService {
         title: title,
         content: content,
         imagePath: image,
-        creator:null
+        creator: null,
       };
     }
     this.mHttpClient
-      .put("http://localhost:3000/api/posts/edit/" + id, postData)
+      .put(BASE_URL + `/edit/${id}`, postData)
       .subscribe((response) => {
         this.mRouter.navigate(["/"]);
       });
   }
   deletePost(id: string) {
-   return this.mHttpClient.delete("http://localhost:3000/api/posts/" + id)
-     
+    return this.mHttpClient.delete(BASE_URL + `/${id}`);
   }
 }

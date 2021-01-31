@@ -6,12 +6,12 @@ mongoose.set("useNewUrlParser", true);
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 const postRoutes = require("./routes/postsRoutes");
-const authRoutes = require("./routes/authRoutes");
+const userAuthRoutes = require("./routes/userAuthRoutes");
 const app = express();
 //Connect the db
 mongoose
   .connect(
-    "mongodb+srv://OmarSalem011:OmarSalem011@cluster0.r4hag.mongodb.net/Mean?retryWrites=true&w=majority"
+    `mongodb+srv://OmarSalem011:${process.env.MONGO_ATLAS_PW}@cluster0.r4hag.mongodb.net/Mean?retryWrites=true&w=majority`
   )
   .then(() => {
     console.log("Connect to DB");
@@ -34,6 +34,6 @@ app.use((req, res, next) => {
 });
 //setup backend apis
 app.use("/api/posts",postRoutes)
-app.use("/api/user", authRoutes);
+app.use("/api/user", userAuthRoutes);
 
 module.exports = app;

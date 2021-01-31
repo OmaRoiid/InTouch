@@ -2,7 +2,7 @@
 import { Component, OnInit, OnDestroy, DoCheck } from "@angular/core";
 import { PageEvent } from "@angular/material";
 import { Subscription } from "rxjs";
-import { UserService } from "src/app/auth/user.service";
+import { UserAuthService } from "src/app/auth/userAuth.service";
 
 import { Post } from "../post.model";
 import { PostsService } from "../posts.service";
@@ -19,19 +19,19 @@ export class PostListComponent implements OnInit, OnDestroy {
   totalPosts = 0;
   postsPerPage = 2;
   currentPage = 1;
-  userId:string;
+  userId: string;
   pageSizeOptions = [1, 2, 5, 10];
   private postsSub: Subscription;
   private authSup: Subscription;
 
   constructor(
     public postsService: PostsService,
-    private userServices: UserService
+    private userServices: UserAuthService
   ) {}
 
   ngOnInit() {
     this.isLoading = true;
-    this.userId=this.userServices.getUserId()
+    this.userId = this.userServices.getUserId();
     this.postsService.getPosts(this.postsPerPage, this.currentPage);
     this.postsSub = this.postsService
       .getPostUpdateListener()
@@ -40,16 +40,14 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.totalPosts = postData.postCount;
         this.posts = postData.posts;
       });
-      this.isAuth=this.userServices.getUserAuth()
+    this.isAuth = this.userServices.getUserAuth();
     this.authSup = this.userServices
       .getAuthStatusListenner()
       .subscribe((authState) => {
-       
         this.isAuth = authState;
         this.userId = this.userServices.getUserId();
       });
   }
- 
 
   onChangePage(pageData: PageEvent) {
     this.isLoading = true;
@@ -60,17 +58,19 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   onDelete(postId: string) {
     this.isLoading = true;
-     console.log(this.isLoading);
-    this.postsService.deletePost(postId).subscribe(() => {
-      this.isLoading = false;
-      this.postsService.getPosts(this.postsPerPage, this.currentPage);
-       this.isLoading = false;
-       console.log(this.isLoading)
-    },(err)=>{
-      this.isLoading=false;
-      console.log(err);
-
-    });
+    console.log(this.isLoading);
+    this.postsService.deletePost(postId).subscribe(
+      () => {
+        this.isLoading = false;
+        this.postsService.getPosts(this.postsPerPage, this.currentPage);
+        this.isLoading = false;
+        console.log(this.isLoading);
+      },
+      (err) => {
+        this.isLoading = false;
+        console.log(err);
+      }
+    );
   }
 
   ngOnDestroy() {

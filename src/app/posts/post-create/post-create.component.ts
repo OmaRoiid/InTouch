@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, ParamMap } from "@angular/router";
 import { Subscription } from "rxjs";
-import { UserService } from "src/app/auth/user.service";
+import { UserAuthService } from "src/app/auth/userAuth.service";
 import { Post } from "../post.model";
 import { PostsService } from "../posts.service";
 import {Costume} from "./costume-type.validator"
@@ -26,7 +26,7 @@ export class PostCreateComponent implements OnInit, OnDestroy {
   constructor(
     public postsService: PostsService,
     public route: ActivatedRoute,
-    public userServices: UserService
+    public userServices: UserAuthService
   ) {}
 
   ngOnInit() {
