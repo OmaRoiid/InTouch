@@ -49,7 +49,7 @@ export class UserAuthService {
     const authData: AuthModel = { email: email, password: password };
     this.httpClient.post(BASE_URL + "/signup", authData).subscribe(
       () => {
-        this.router.navigate["/"];
+        this.router.navigate(["/"]);
       },
       (error) => {
         this.authStatusListenner.next(false);
@@ -122,5 +122,10 @@ export class UserAuthService {
       expirationDate: new Date(expirationDate),
       userId: userId,
     };
+  }
+  getUserInfoById(userId: string) {
+    return this.httpClient.get<{ message: string; user: UserModel }>(
+      BASE_URL + "/user_info/" + userId
+    );
   }
 }

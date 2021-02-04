@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule } from "@angular/core";
 import {
   MatInputModule,
   MatCardModule,
@@ -7,8 +7,11 @@ import {
   MatExpansionModule,
   MatProgressSpinnerModule,
   MatPaginatorModule,
+  MatMenuModule,
+  MatIconModule,
+  MatDatepickerModule,
 } from "@angular/material";
-import { ToastrModule } from "ngx-toastr";
+import { MatNativeDateModule } from "@angular/material";
 
 @NgModule({
   exports: [
@@ -19,6 +22,10 @@ import { ToastrModule } from "ngx-toastr";
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatPaginatorModule,
+    MatMenuModule,
+    MatIconModule,
+    MatNativeDateModule,
+    MatDatepickerModule,
   ],
   providers: [],
 })

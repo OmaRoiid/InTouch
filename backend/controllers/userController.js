@@ -7,10 +7,10 @@ exports.createUser = (req, res, next) => {
     const newUserAuth = new userAuth({
       email: req.body.email,
       password: hashedPassword,
-    });
-    newUserAuth
+    })
       .save()
       .then((results) => {
+        console.log(results);
         res.status(200).json({
           messasge: "user saved to DB",
           results: results,
@@ -61,3 +61,21 @@ exports.userLogin = (req, res, next) => {
       });
     });
 };
+exports.userInfo = (req, res, next) => {
+  userAuth
+    .findById(req.params.id)
+    .then((user) => {
+      if (user) {
+        res.status(200).json({ message: "featching success", user: user });
+      } else {
+        res.status(404).json({ message: "User not found!" });
+      }
+    })
+    .catch((err) => {
+      res.status(500).json({
+        title: "Fetching issue",
+        message: "Fetching User failed",
+      });
+    });
+};
+exports.editUserInfo = (req, res, next) => {};

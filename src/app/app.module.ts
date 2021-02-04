@@ -10,11 +10,13 @@ import { ErrorInterceptor } from "./error-interceptor";
 import { ToastrModule } from "ngx-toastr";
 import { AngularMateriaModule } from "./angular-material.module";
 import { PostModule } from "./posts/post.module";
+import { MenuComponent } from './menu/menu.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderComponent,
+    MenuComponent,
    
   ],
   imports: [
