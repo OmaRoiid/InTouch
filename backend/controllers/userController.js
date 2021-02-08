@@ -78,4 +78,35 @@ exports.userInfo = (req, res, next) => {
       });
     });
 };
-exports.editUserInfo = (req, res, next) => {};
+exports.editUserInfo = (req, res, next) => {
+  console.log(req.body)
+  const updatedUser = new userAuth({
+    _id: req.body.id,
+    email: req.body.info.email,
+    password: req.body.info.password,
+    name: req.body.info.name,
+    age: req.body.info.age,
+    country: req.body.info.country,
+    birthday: req.body.info.birthday,
+  });
+    console.log(updatedUser._id);
+
+  console.log(updatedUser);
+  userAuth
+    .updateOne({_id:req.body.id}, updatedUser)
+    .then((result) => {
+      console.log(result)
+      if (result.n > 0) {
+        res.status(200).json({ message: "Update successful" });
+      } else {
+        res.status(401).json({ message: "Not Authorized!!" });
+      }
+    })
+    .catch((error) => {
+      console.log(error)
+      res.status(500).json({
+        title: "updating issue",
+        message: "Couldn't update user!",
+      });
+    });
+};

@@ -128,4 +128,16 @@ export class UserAuthService {
       BASE_URL + "/user_info/" + userId
     );
   }
+  updateUserInfo(id:String,updatedInfoObj:UserModel) {
+    const updatedObj={info:{...updatedInfoObj},id:id}
+
+    this.httpClient
+      .put<{ message: string }>(
+        BASE_URL + "/user_info/update/" + id,
+        updatedObj
+      )
+      .subscribe((response) => {
+        console.log(response.message);
+      });
+  }
 }
