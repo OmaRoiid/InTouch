@@ -1,9 +1,9 @@
-<h2>Hello {{ profileInfo.email }}</h2>
+<h2>Hello {{ profileInfo?.email }}</h2>
+<mat-spinner *ngIf="isLoading"></mat-spinner>
 <form (submit)="UpdateUserInfo(userFormInfo)" #userFormInfo="ngForm">
   <mat-accordion class="example-headers-align">
     <mat-expansion-panel
-      [expanded]="step === 0"
-      (opened)="setStep(0)"
+      expanded="true"
       hideToggle
     >
       <mat-expansion-panel-header>
@@ -21,8 +21,7 @@
           placeholder="name"
           type="text"
           name="name"
-          ngModel
-          [value]="profileInfo.name"
+          [ngModel]="profileInfo?.name"
         />
       </mat-form-field>
 
@@ -33,18 +32,12 @@
           type="number"
           min="1"
           name="age"
-          ngModel
-          [value]="profileInfo.age"
+         [ngModel]="profileInfo?.age"
         />
       </mat-form-field>
-      <mat-action-row>
-        <button mat-button color="primary" (click)="nextStep()">Next</button>
-      </mat-action-row>
     </mat-expansion-panel>
 
     <mat-expansion-panel
-      [expanded]="step === 1"
-      (opened)="setStep(1)"
       hideToggle
     >
       <mat-expansion-panel-header>
@@ -61,20 +54,13 @@
           matInput
           type="text"
           name="country"
-          ngModel
-          [value]="profileInfo.country"
+          [ngModel]="profileInfo?.country"
         />
       </mat-form-field>
 
-      <mat-action-row>
-        <button mat-button color="warn" (click)="prevStep()">Previous</button>
-        <button mat-button color="primary" (click)="nextStep()">Next</button>
-      </mat-action-row>
     </mat-expansion-panel>
 
     <mat-expansion-panel
-      [expanded]="step === 2"
-      (opened)="setStep(2)"
       hideToggle
     >
       <mat-expansion-panel-header>
@@ -89,22 +75,21 @@
         <mat-label>Date</mat-label>
         <input
           matInput
-           type="text"
+          type="date"
           name="date"
-          ngModel
           [matDatepicker]="picker"
           (focus)="picker.open()"
-          [value]="profileInfo.birthday"
+          [ngModel]="profileInfo?.birthday"
         />
       </mat-form-field>
       <mat-datepicker #picker></mat-datepicker>
 
-      <mat-action-row>
-        <button mat-button color="warn" (click)="prevStep()">Previous</button>
-        <button mat-button color="primary" (click)="nextStep()">End</button>
-      </mat-action-row>
     </mat-expansion-panel>
   </mat-accordion>
-  <button type="submit">Update</button>
+  <div>
+        <button class="update" mat-raised-button color="primary" type="submit">Update</button>
+  </div>
+
+
 </form>
 

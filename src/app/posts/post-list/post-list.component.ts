@@ -3,6 +3,7 @@ import { Component, OnInit, OnDestroy, DoCheck } from "@angular/core";
 import { PageEvent } from "@angular/material";
 import { Subscription } from "rxjs";
 import { UserAuthService } from "src/app/auth/userAuth.service";
+import { HeaderTitelService } from "src/app/header-titel.service";
 
 import { Post } from "../post.model";
 import { PostsService } from "../posts.service";
@@ -26,7 +27,8 @@ export class PostListComponent implements OnInit, OnDestroy {
 
   constructor(
     public postsService: PostsService,
-    private userServices: UserAuthService
+    private userServices: UserAuthService,
+    private mHeaderTitel:HeaderTitelService
   ) {}
 
   ngOnInit() {
@@ -47,6 +49,7 @@ export class PostListComponent implements OnInit, OnDestroy {
         this.isAuth = authState;
         this.userId = this.userServices.getUserId();
       });
+    this.mHeaderTitel.setTitle("Posts");
   }
 
   onChangePage(pageData: PageEvent) {
